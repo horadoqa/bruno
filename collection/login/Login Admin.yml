@@ -11,7 +11,7 @@ http:
     data: |-
       {
         "email": "{{emailAlterado}}",
-        "password": "pwd123"
+        "password": "1q2w3e4r"
       }
   auth: inherit
 

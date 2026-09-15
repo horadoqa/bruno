@@ -4,7 +4,7 @@ variables:
     value: http://localhost:3000
     description: ""
   - name: email
-    value: fulano.curso@qa.com
+    value: horadoqa@qa.com
     description: ""
   - secret: true
     name: password

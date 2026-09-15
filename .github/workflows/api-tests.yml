@@ -36,6 +36,7 @@ jobs:
         run: npm install -g @usebruno/cli
 
       - name: Run Bruno tests
+        working-directory: ./collection
         run: bru run --env local --reporter-junit results.xml
 
       - name: Upload test report

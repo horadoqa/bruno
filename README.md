@@ -20,7 +20,7 @@ Cada arquivo `.yml` representa uma requisição HTTP, cenário de teste ou fluxo
 
 ## Stack
 
- - **Bruno** — execução e organização dos testes de API
+- **Bruno** — execução e organização dos testes de API
 - **YAML** — definição das coleções e ambientes
 - **GitHub Actions** — execução automatizada em CI
 - **ServeRest** — API utilizada como referência para os testes
@@ -39,11 +39,11 @@ Cada arquivo `.yml` representa uma requisição HTTP, cenário de teste ou fluxo
 
  > Projeto de automação de testes de API com Bruno + ServeRest.
 
- ### 1\. Subir a API
+### 1\. Subir a API
 
  A API ServeRest pode ser executada localmente utilizando Docker.
 
- Docker Hub:
+Docker Hub:
 
 https://hub.docker.com/r/paulogoncalvesbh/serverest/tags
 
@@ -57,22 +57,51 @@ docker run -d --name serverest -p 3000:3000 paulogoncalvesbh/serverest:latest
 http://localhost:3000
 ```
 
+Também é possível testar diretamente um endpoint:
+
+```bash
+curl -I http://localhost:3000
+HTTP/1.1 200 OK
+```
+
 ### 2\. Instalar o Bruno CLI
 
 ```bash
 npm install -g @usebruno/cli
 ```
 
-### 3\. Executar a suíte
+### 3\. Executar a suíte (collection)
+
+Acessar a pasta da collectio
+
+```bash
+cd collection
+```
+
+Depois
 
 ```bash
 bru run --env local
 ```
 
+OBS.: O `bru run` não aceita o caminho da coleção como argumento. Ele precisa ser executado estando fisicamente no diretório onde está o `opencollection.yml`
+
 ### 4\. Gerar relatório JUnit
 
 ```bash
 bru run --env local --reporter-junit results.xml
+```
+
+### 5\. Executar somente a pasta Usuarios
+
+```bash
+bru run Usuarios --env local
+```
+
+Salvandoo resultado
+
+```bash
+bru run Usuarios --env local --reporter-junit results.xml
 ```
 
 ## Ambientes
@@ -127,30 +156,53 @@ bru run --env local
  A arquitetura do projeto é orientada por coleções e cenários de teste, organizados por contexto funcional:
 
 ```
-[Bruno Collection]
-        │
-        ├── Login
-        │   ├── Login Admin
-        │   └── Login Cliente
-        │
-        ├── Usuarios
-        │   ├── Criar Usuario
-        │   ├── Listar Usuarios
-        │   ├── Alterar Usuario
-        │   └── Excluir Usuario
-        │
-        ├── Produtos
-        │   ├── Cadastrar Produtos
-        │   ├── Buscar Produto Por Nome
-        │   └── Listar Produtos
-        │
-        ├── Carrinhos
-        │   ├── Criar Carrinho
-        │   ├── Concluir Compra
-        │   └── Listar Carrinhos
-        │
-        └── environments/
-            └── local.yml
+bruno/
+│
+├── .github/
+│   └── workflows/
+│       └── api-tests.yml
+│
+└── collection/
+    ├── App
+    │   ├── README.md
+    │   └── folder.yml
+    ├── Produtos
+    │   ├── Alterar Produto.yml
+    │   ├── Buscar Produto Por ID.yml
+    │   ├── Buscar Produto Por Nome.yml
+    │   ├── Cadastrar Produto sem Admin.yml
+    │   ├── Cadastrar Produto sem Token.yml
+    │   ├── Cadastrar Produtos.yml
+    │   ├── Listar produtos.yml
+    │   └── folder.yml
+    ├── Usuarios
+    │   ├── Alterar Usuario.yml
+    │   ├── Buscar usuario por ID.yml
+    │   ├── Cadastrar Cliente.yml
+    │   ├── Criar Usuario.yml
+    │   ├── Listar Usuarios.yml
+    │   └── folder.yml
+    ├── carrinhos
+    │   ├── Buscar Carrinho Por ID.yml
+    │   ├── Cancelar Compra.yml
+    │   ├── Concluir Compra.yml
+    │   ├── Criar carrinho.yml
+    │   ├── Excluir Cliente.yml
+    │   ├── Excluir Produto.yml
+    │   ├── Excluir Usuario.yml
+    │   ├── Listar Carrinhos.yml
+    │   ├── Recriar Carrinho.yml
+    │   └── folder.yml
+    ├── environments
+    │   └── local.yml
+    ├── login
+    │   ├── Login Admin.yml
+    │   ├── Login Cliente.yml
+    │   └── folder.yml
+    ├── opencollection.yml
+    ├── README.md
+    └── results.html
+
 ```
 
 ## Fluxos cobertos
@@ -184,76 +236,25 @@ A pipeline:
 
  ## Relatórios
 
- Durante a execução dos testes podem ser gerados relatórios nos formatos:
+ Durante a execução dos testes podem ser gerados relatórios no formato:
 
-- HTML
-- JSON
 - XML/JUnit
 
  Os arquivos de resultado, como:
 
 ```
-results.html
-results.json
 results.xml
 ```
 
- são considerados artefatos de execução e devem permanecer ignorados pelo Git para evitar ruído no versionamento.
-
-## Estrutura do repositório
-
-```
-.
-├── .github/
-│   └── workflows/
-│       └── api-tests.yml
-├── App/
-├── Carrinhos/
-├── environments/
-├── Login/
-├── Produtos/
-├── Usuarios/
-├── .gitignore
-├── opencollection.yml
-├── README.md
-└── ...
-```
+São considerados artefatos de execução e devem permanecer ignorados pelo Git para evitar ruído no versionamento.
 
 ## Troubleshooting
 
-### A API não responde
+### Token ausente ou inválido
 
- Verifique se o container do ServeRest foi iniciado corretamente e se a porta `3000` está disponível:
+Revise a etapa de login e verifique se o token de autorização está sendo capturado corretamente no script `after-response`.
 
-```bash
-docker ps
-```
-
- Também é possível testar diretamente um endpoint:
-
-```bash
-curl http://localhost:3000/produtos
-```
-
- ### Bruno não encontra o ambiente
-
- Confirme se o arquivo abaixo existe:
-
-```
-environments/local.yml
-```
-
- E execute a coleção utilizando o ambiente correto:
-
-```bash
-bru run --env local
-```
-
- ### Token ausente ou inválido
-
- Revise a etapa de login e verifique se o token de autorização está sendo capturado corretamente no script `after-response`.
-
- ### Erros de status 400 ou 401
+### Erros de status 400 ou 401
 
  Verifique:
 
@@ -290,4 +291,4 @@ Para contribuir com melhorias na suíte:
 - testes de integração
 - execução contínua em CI/CD
 
- A principal mudança foi deixar **Quick start como o único lugar que ensina a executar o projeto**. A seção **Ambientes** agora apenas explica o propósito do `local.yml`, sem repetir todo o processo de configuração.
+ 
