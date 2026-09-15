@@ -88,7 +88,15 @@ Depois
 bru run --env local
 ```
 
-OBS.: O `bru run` não aceita o caminho da coleção como argumento. Ele precisa ser executado estando fisicamente no diretório onde está o `opencollection.yml`
+OU 
+
+Usando o `Makefile`
+
+```bash
+make test 
+```
+
+OBS.: O `bru run` não aceita o caminho da coleção como argumento. Ele precisa ser executado estando fisicamente no diretório onde está o `opencollection.yml` com o Makefile é possível executar direto da raiz.
 
 ### 4\. Gerar relatório JUnit
 
@@ -127,16 +135,8 @@ Esse arquivo contém a URL base da API e as variáveis necessárias para autenti
 Para executar os testes utilizando esse ambiente:
 
 ```bash
-cd collectio
+cd collection
 bru run --env local
-```
-
-OU 
-
-Usando o `Makefile`
-
-```bash
-make test 
 ```
 
 ## Endpoints principais
