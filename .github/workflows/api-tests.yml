@@ -35,13 +35,16 @@ jobs:
       - name: Install Bruno CLI
         run: npm install -g @usebruno/cli
 
+      - name: Prepare reports
+        run: mkdir -p reports
+
       - name: Run Bruno tests
         working-directory: ./collection
-        run: bru run --env local --reporter-junit results.xml
+        run: bru run --env local --reporter-junit ../reports/results.xml
 
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: bruno-report
-          path: results.xml
+          path: reports/results.xml
