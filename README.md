@@ -1,10 +1,8 @@
 # Bruno API ServeRest
 
- [BRUNO](<https://www.usebruno.com/>)
+Este repositório reúne uma suíte de testes automatizados de API para a aplicação ServeRest, desenvolvida com [Bruno](<https://www.usebruno.com/>).
 
- Este repositório reúne uma suíte de testes automatizados de API para a aplicação ServeRest, desenvolvida com [Bruno](<https://www.usebruno.com/>).
-
- O objetivo é validar os principais fluxos da API, incluindo autenticação, usuários, produtos, carrinhos e conclusão de compras, além de garantir a qualidade das regras de negócio por meio de testes automatizados e execução contínua em CI/CD.
+O objetivo é validar os principais fluxos da API, incluindo autenticação, usuários, produtos, carrinhos e conclusão de compras, além de garantir a qualidade das regras de negócio por meio de testes automatizados e execução contínua em CI/CD.
 
  ## Visão geral
 
@@ -51,7 +49,13 @@ https://hub.docker.com/r/paulogoncalvesbh/serverest/tags
 docker run -d --name serverest -p 3000:3000 paulogoncalvesbh/serverest:latest
 ```
 
- Após iniciar o container, a API estará disponível em:
+```bash
+docker ps
+CONTAINER ID   IMAGE                               COMMAND          CREATED       STATUS       PORTS                                         NAMES
+7ccd11825680   paulogoncalvesbh/serverest:latest   "npm start --"   5 minutes ago   Up 5 minutes   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp   serverest
+```
+
+Após iniciar o container, a API estará disponível em:
 
 ```
 http://localhost:3000
@@ -104,6 +108,12 @@ Salvandoo resultado
 bru run Usuarios --env local --reporter-junit results.xml
 ```
 
+Parando o serviço do Serverest
+
+```bash
+docker stop serverest && docker rm serverest 
+```
+
 ## Ambientes
 
 O ambiente utilizado nos testes locais é o `local`, definido em:
@@ -117,10 +127,19 @@ Esse arquivo contém a URL base da API e as variáveis necessárias para autenti
 Para executar os testes utilizando esse ambiente:
 
 ```bash
+cd collectio
 bru run --env local
 ```
 
- ## Endpoints principais
+OU 
+
+Usando o `Makefile`
+
+```bash
+make test 
+```
+
+## Endpoints principais
 
 | Módulo | Método | Endpoint | Objetivo |
 | --- | --- | --- | --- |
@@ -162,47 +181,49 @@ bruno/
 │   └── workflows/
 │       └── api-tests.yml
 │
-└── collection/
-    ├── App
-    │   ├── README.md
-    │   └── folder.yml
-    ├── Produtos
-    │   ├── Alterar Produto.yml
-    │   ├── Buscar Produto Por ID.yml
-    │   ├── Buscar Produto Por Nome.yml
-    │   ├── Cadastrar Produto sem Admin.yml
-    │   ├── Cadastrar Produto sem Token.yml
-    │   ├── Cadastrar Produtos.yml
-    │   ├── Listar produtos.yml
-    │   └── folder.yml
-    ├── Usuarios
-    │   ├── Alterar Usuario.yml
-    │   ├── Buscar usuario por ID.yml
-    │   ├── Cadastrar Cliente.yml
-    │   ├── Criar Usuario.yml
-    │   ├── Listar Usuarios.yml
-    │   └── folder.yml
-    ├── carrinhos
-    │   ├── Buscar Carrinho Por ID.yml
-    │   ├── Cancelar Compra.yml
-    │   ├── Concluir Compra.yml
-    │   ├── Criar carrinho.yml
-    │   ├── Excluir Cliente.yml
-    │   ├── Excluir Produto.yml
-    │   ├── Excluir Usuario.yml
-    │   ├── Listar Carrinhos.yml
-    │   ├── Recriar Carrinho.yml
-    │   └── folder.yml
-    ├── environments
-    │   └── local.yml
-    ├── login
-    │   ├── Login Admin.yml
-    │   ├── Login Cliente.yml
-    │   └── folder.yml
-    ├── opencollection.yml
-    ├── README.md
-    └── results.html
-
+├── collection/
+│   ├── App
+│   │   ├── README.md
+│   │   └── folder.yml
+│   ├── Produtos
+│   │   ├── Alterar Produto.yml
+│   │   ├── Buscar Produto Por ID.yml
+│   │   ├── Buscar Produto Por Nome.yml
+│   │   ├── Cadastrar Produto sem Admin.yml
+│   │   ├── Cadastrar Produto sem Token.yml
+│   │   ├── Cadastrar Produtos.yml
+│   │   ├── Listar produtos.yml
+│   │   └── folder.yml
+│   ├── Usuarios
+│   │   ├── Alterar Usuario.yml
+│   │   ├── Buscar usuario por ID.yml
+│   │   ├── Cadastrar Cliente.yml
+│   │   ├── Criar Usuario.yml
+│   │   ├── Listar Usuarios.yml
+│   │   └── folder.yml
+│   ├── carrinhos
+│   │   ├── Buscar Carrinho Por ID.yml
+│   │   ├── Cancelar Compra.yml
+│   │   ├── Concluir Compra.yml
+│   │   ├── Criar carrinho.yml
+│   │   ├── Excluir Cliente.yml
+│   │   ├── Excluir Produto.yml
+│   │   ├── Excluir Usuario.yml
+│   │   ├── Listar Carrinhos.yml
+│   │   ├── Recriar Carrinho.yml
+│   │   └── folder.yml
+│   ├── environments
+│   │   └── local.yml
+│   ├── login
+│   │   ├── Login Admin.yml
+│   │   ├── Login Cliente.yml
+│   │   └── folder.yml
+│   ├── opencollection.yml
+│   └── reports
+│       └── results.html
+├── .gitignore
+├── README.md
+└── Makefile
 ```
 
 ## Fluxos cobertos
@@ -243,7 +264,7 @@ A pipeline:
  Os arquivos de resultado, como:
 
 ```
-results.xml
+collection/report/results.xml
 ```
 
 São considerados artefatos de execução e devem permanecer ignorados pelo Git para evitar ruído no versionamento.
