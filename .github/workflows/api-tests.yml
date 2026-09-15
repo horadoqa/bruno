@@ -1,28 +1,33 @@
 name: API Tests
 
 on:
-  # Executa todos os dias às 09:00 no horário de Brasília (9:00 UTC)
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 12 * * *" 
 
-  # Permite executar manualmente pelo GitHub
   workflow_dispatch:
 
 jobs:
   api-tests:
     runs-on: ubuntu-latest
+
     services:
       serverest:
         image: paulogoncalvesbh/serverest:latest
         ports:
           - 3000:3000
+
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v7
 
       - name: Aguarda o ServeRest responder
         run: |
           for i in $(seq 1 30); do
-            curl -sf http://localhost:3000/produtos > /dev/null && break
+            if curl -sf http://localhost:3000/produtos > /dev/null; then
+              echo "ServeRest está disponível!"
+              break
+            fi
+
             echo "Aguardando ServeRest subir... (tentativa $i)"
             sleep 1
           done
@@ -30,18 +35,35 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install Bruno CLI
         run: npm install -g @usebruno/cli
 
+      - name: Bruno version
+        run: bru --version
+
       - name: Run Bruno tests
         working-directory: ./collection
-        run: bru run --env local --reporter-junit reports/results.xml
+        run: |
+          mkdir -p reports
+          bru run \
+            --env local \
+            --reporter-junit reports/results.xml
+
+      - name: Verifica relatório
+        if: always()
+        run: |
+          echo "Conteúdo de collection/reports:"
+          ls -lah collection/reports/ || true
+
+          echo "Procurando results.xml:"
+          find . -name "results.xml" -type f -print
 
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: bruno-report
-          path: collection/reports/results.xml
+          path: ./collection/reports/results.xml
+          if-no-files-found: warn
