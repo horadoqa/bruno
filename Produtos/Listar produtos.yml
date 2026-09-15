@@ -1,0 +1,36 @@
+info:
+  name: Listar produtos
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/produtos"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Content-Type é JSON", () => {
+          expect(res.headers["content-type"]).to.include("application/json");
+        })
+
+        test("Todo produto tem preço mínimo de R$ 1", () => {
+          res.body.produtos.forEach((produto) => {
+            expect(produto.preco).to.be.at.least(1);
+          });
+        })
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.produtos
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

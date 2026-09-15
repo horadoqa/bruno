@@ -1,0 +1,40 @@
+info:
+  name: Criar carrinho
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/carrinhos"
+  body:
+    type: json
+    data: |-
+      {
+        "produtos": [
+          {
+            "idProduto": "{{produtoId}}",
+            "quantidade": 2
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setVar("carrinhoId", res.body._id);
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "201"
+    - expression: res.body._id
+      operator: isDefined
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

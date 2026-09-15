@@ -1,0 +1,37 @@
+info:
+  name: Alterar Usuario
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/usuarios/{{usuarioId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "{{nomeGerado}}",
+        "email": "alterado-{{emailGerado}}",
+        "password": "pwd123",
+        "administrador": "true"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setVar("emailAlterado","alterado-" + bru.getVar("emailGerado"));
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.message
+      operator: eq
+      value: Registro alterado com sucesso
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -1,0 +1,36 @@
+info:
+  name: Alterar Produto
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/produtos/{{produtoId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "{{produtoNome}}",
+        "preco": 900,
+        "descricao": "Mouse sem fio wireless",
+        "quantidade": 381
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body.message
+      operator: eq
+      value: Registro alterado com sucesso
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
