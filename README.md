@@ -33,17 +33,15 @@ Cada arquivo `.yml` representa uma requisição HTTP, cenário de teste ou fluxo
 - Docker
 - Bruno CLI
 
- ## Quick start
+## Quick start
 
- > Projeto de automação de testes de API com Bruno + ServeRest.
+> Projeto de automação de testes de API com Bruno + ServeRest.
 
 ### 1\. Subir a API
 
- A API ServeRest pode ser executada localmente utilizando Docker.
+A API ServeRest pode ser executada localmente utilizando Docker.
 
-Docker Hub:
-
-https://hub.docker.com/r/paulogoncalvesbh/serverest/tags
+Docker Hub: https://hub.docker.com/r/paulogoncalvesbh/serverest/tags
 
 ```bash
 docker run -d --name serverest -p 3000:3000 paulogoncalvesbh/serverest:latest
@@ -76,7 +74,7 @@ npm install -g @usebruno/cli
 
 ### 3\. Executar a suíte (collection)
 
-Acessar a pasta da collectio
+Acessar a pasta da collection
 
 ```bash
 cd collection
@@ -93,15 +91,26 @@ OU
 Usando o `Makefile`
 
 ```bash
-make test 
+make help
+
+Comandos disponíveis:
+
+  make up          - Sobe o ambiente Serverest
+  make down        - Para e remove o ambiente Serverest
+  make setup       - Instala as dependências do projeto
+  make test        - Executa todos os testes
+  make produtos    - Executa os testes de Produtos
+  make usuarios    - Executa os testes de Usuários
+  make carrinhos   - Executa os testes de Carrinhos
+  make login       - Executa os testes de Login
 ```
 
-OBS.: O `bru run` não aceita o caminho da coleção como argumento. Ele precisa ser executado estando fisicamente no diretório onde está o `opencollection.yml` com o Makefile é possível executar direto da raiz.
+OBS.: O `bru run` não aceita o caminho da coleção como argumento. Ele precisa ser executado estando fisicamente no diretório onde está o `opencollection.yml`. Com o Makefile é possível preparar o fluxo de execução do teste.
 
 ### 4\. Gerar relatório JUnit
 
 ```bash
-bru run --env local --reporter-junit results.xml
+bru run --env local --reporter-junit reports/results.xml
 ```
 
 ### 5\. Executar somente a pasta Usuarios
@@ -110,13 +119,7 @@ bru run --env local --reporter-junit results.xml
 bru run Usuarios --env local
 ```
 
-Salvandoo resultado
-
-```bash
-bru run Usuarios --env local --reporter-junit results.xml
-```
-
-Parando o serviço do Serverest
+### 6\. Parando o serviço do Serverest
 
 ```bash
 docker stop serverest && docker rm serverest 
